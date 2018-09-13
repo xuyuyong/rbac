@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.mybatis.plus.dao.mapper.UserMapper">
+<mapper namespace="com.rbac.dao.mapper.UserMapper">
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.rbac.dao.bean.User">
-        <id column="id" jdbcType="INT" property="id" />
+        <id column="id" jdbcType="INTEGER" property="id" />
         <result column="username" jdbcType="VARCHAR" property="username" />
         <result column="loginacct" jdbcType="VARCHAR" property="loginacct" />
         <result column="userpswd" jdbcType="VARCHAR" property="userpswd" />
         <result column="email" jdbcType="VARCHAR" property="email" />
-        <result column="createtime" jdbcType="DATETIME" property="createtime" />
+        <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
@@ -17,4 +17,66 @@
         id, username, loginacct, userpswd, email, createtime
     </sql>
 
+    <select id="pageQueryData" resultType="com.rbac.dao.bean.User">
+        select
+        *
+        from t_user
+        <where>
+            <if test="queryText != null">
+                and loginacct like concat('%', #{queryText}, '%')
+            </if>
+        </where>
+        order by createtime desc
+        limit #{start}, #{size}
+    </select>
+
+    <select id="pageQueryCount" resultType="int">
+        select
+        count(*)
+        from t_user
+        <where>
+            <if test="queryText != null">
+                and loginacct like concat('%', #{queryText}, '%')
+            </if>
+        </where>
+    </select>
+
+    <insert id="insertUser">
+        insert into t_user (
+        loginacct, username, userpswd, email, createtime
+        ) values (
+        #{loginacct}, #{username}, #{userpswd}, #{email}, #{createtime}
+        )
+    </insert>
+
+    <insert id="insertUserRoles">
+        insert into t_user_role ( userid, roleid ) values
+        <foreach collection="roleids" item="roleid" separator=",">
+            ( #{userid}, #{roleid} )
+        </foreach>
+    </insert>
+
+    <update id="updateUser">
+        update t_user
+        set loginacct = #{loginacct}, username = #{username}, email = #{email}
+        where id = #{id}
+    </update>
+
+    <delete id="deleteUserById">
+        delete from t_user where id = #{id}
+    </delete>
+
+    <delete id="deleteUsers">
+        delete from t_user where id in
+        <foreach collection="userids" item="userid" open="(" close=")" separator=",">
+            #{userid}
+        </foreach>
+    </delete>
+
+    <delete id="deleteUserRoles">
+        delete from t_user_role where userid = #{userid} and roleid in
+        <foreach collection="roleids" item="roleid" open="(" close=")" separator=",">
+            #{roleid}
+        </foreach>
+    </delete>
 </mapper>

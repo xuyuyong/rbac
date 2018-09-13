@@ -7,4 +7,5 @@ package com.rbac.controller;
  * Content:
  */
 public class UserAction {
+
 }

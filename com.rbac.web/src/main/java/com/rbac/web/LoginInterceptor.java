@@ -23,8 +23,9 @@ public class LoginInterceptor implements HandlerInterceptor {
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
-		
-		// 判断当前用户是否已经登陆
+
+		return true;
+		/*// 判断当前用户是否已经登陆
 		HttpSession session = request.getSession();
 		User loginUser = (User)session.getAttribute("loginUser");
 		
@@ -34,7 +35,7 @@ public class LoginInterceptor implements HandlerInterceptor {
 			return false;	
 		} else {
 			return true;
-		}
+		}*/
 	}
 
 	/**
